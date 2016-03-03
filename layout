@@ -1,0 +1,37 @@
+// C/C++ File
+// AUTHOR:   blkcat
+// FILE:     layout.h
+// ROLE:     To define copter's layout based on EBOX
+// CREATED:  2016-02-12 12:20:45
+// MODIFIED: 2016-02-12 12:20:45
+//
+
+// LAYOUT:
+
+// PC DEBUG:
+		// UART1:
+		// TX: PA9
+		// RX: PA10
+		
+// MOTERS:
+		// motor 1: PA0
+		// motor 2: PA1
+		// motor 3: PA2
+		// motor 4: PA3
+
+// RC CHANNELS:  (stardard receiver)
+		// ROLL:    PA4
+		// PITCH:	PA5
+		// THROTTLE:PA6
+		// YAW:		PA7
+		// reserved:PB0
+		// reserved:PB1
+
+// SENSORS:  (MPU6050)
+		// I2C:		i2c2 (hardware)
+		// SCL:		PB10
+		// SDA:		PB11
+
+
+
+

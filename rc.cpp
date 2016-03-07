@@ -9,8 +9,8 @@ const int offset   = 168;
 static int32_t LPFRC[CHANNELS] = {
 		ROLL_ZERO		* (1 << LPF_RC_FACTOR),
 		PITCH_ZERO		* (1 << LPF_RC_FACTOR),
-		YAW_ZERO		* (1 << LPF_RC_FACTOR)
-		THROTTLE_ZERO	* (1 << LPF_RC_FACTOR),
+		YAW_ZERO		* (1 << LPF_RC_FACTOR),
+		THROTTLE_ZERO	* (1 << LPF_RC_FACTOR)
 };
 
  int32_t RCDATA[CHANNELS] = {
@@ -72,6 +72,7 @@ void RC_init(void)
 }
 
 /*
+ * RC TEST
 int main(void)
 {
 		uint64_t preT = 0;
@@ -185,7 +186,7 @@ uint32_t Get_pulse(uint8_t channel)
 
 								break;
 						}
-				case 3:
+				case 4:
 						{
 								if (ic_chan3_high == 0)
 										return 0;
@@ -195,7 +196,7 @@ uint32_t Get_pulse(uint8_t channel)
 
 								break;
 						}
-				case 4:
+				case 3:
 						{
 								if (ic_chan4_high == 0)
 										return 0;

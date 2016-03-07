@@ -8,28 +8,27 @@
 
 static double roll_pidoutput;
 static double pitch_pidoutput;
-static double yaw_pitdoutput;
+static double yaw_pidoutput;
 static double throttle_output;
-
+//MPU6050 mpu(&i2c2);
 void Angle_control(void);
 void Rate_control(void);
 void Motors_control(void);
 
+void ledshink(void);
+
 void setup(void)
 {
 		ebox_init();
-		uart1.begin(115200);
-
+		uart1.begin(256000);
 		IMU_init();
-		// led 5s
-		IMU_calibrate();
-		// led again
+	uart1.printf("%6f%6f%6f%6f\n", pitch_pidoutput, roll_pidoutput, throttle_output, yaw_pidoutput);
+		IMU_calibrate_tmp();
+		imu.ready = 1;
 		RC_init();
-
 		Motors_init();
-
+		//Motors_start(100);
 		Timer_init();
-
 }
 
 int main()
@@ -38,6 +37,18 @@ int main()
 
 		while(true)
 		{
+			uart1.printf("-------------------\n");
+			uart1.printf("RCdata   :%6d     %6d      %6d     %6d\n", RCDATA[0], RCDATA[1], RCDATA[2], RCDATA[3]);
+			uart1.printf("RCangle  :%6f     %6f      %6f     %6f\n", RCANGLE[0], RCANGLE[1], RCANGLE[2], RCANGLE[3]);
+			uart1.printf("euler    :%6f     %6f      %6f     \n",            imu.roll, imu.pitch, imu.yaw);
+			uart1.printf("PIDoutput:%6f     %6f      %6f     %6f\n", pitch_pidoutput, roll_pidoutput, throttle_output, yaw_pidoutput);
+//			uart1.printf("-------------------\n\n\n\n");
+//			uart1.printf("-------------------\n");
+//			uart1.printf("euler    :%6f     %6f      %6f     \n",            imu.roll, imu.pitch, imu.yaw);
+			uart1.printf("acc      :%6.2f   %6.2f   %6.2f\n",imu.accb[0], imu.accb[1], imu.accb[2]);
+			uart1.printf("%6.2f   %6.2f   %6.2f   %6.2f\n",imu.q[0], imu.q[1], imu.q[2]);
+	//		uart1.printf("%6d  %6d   %6d\n",roll_rate_pid.get_output(),pitch_rate_pid.get_output() , yaw_rate_pid.get_output());
+			
 
 				if(loop_100HZ_flag)
 				{
@@ -77,9 +88,10 @@ void Angle_control(void)
 }
 void Rate_control(void)
 {
-		roll_rate_pid.compute(roll_angle_pid.get_output(), imu.gyro[ROLL] * 180 / PI);
-		pitch_rate_pid.compute(pitch_angle_pid.get_output(), imu.gyro[PITCH] * 180 / PI);
-		yaw_rate_pid.compute(yaw_angle_pid.get_output(), imu.gyro[YAW] * 180 / PI);
+	double tmp;
+		roll_rate_pid.compute(tmp = roll_angle_pid.get_output(), imu.gyro[ROLL] * 180 / PI);
+		pitch_rate_pid.compute(tmp = pitch_angle_pid.get_output(), imu.gyro[PITCH] * 180 / PI);
+		yaw_rate_pid.compute(tmp = yaw_angle_pid.get_output(), imu.gyro[YAW] * 180 / PI);
 }
 void Motors_control(void)
 {
@@ -88,14 +100,54 @@ void Motors_control(void)
 		throttle_output = RCDATA[THROTTLE];
 		roll_pidoutput = roll_rate_pid.get_output();
 		pitch_pidoutput = pitch_rate_pid.get_output();
-		yaw_pitdoutput = yaw_rate_pid.get_output();
+		yaw_pidoutput = yaw_rate_pid.get_output();
 
 		// Mix table.
-		m1 = throttle_output + roll_pidoutput - pitch_pidoutput + yaw_pitdoutput;
-		m2 = throttle_output - roll_pidoutput - pitch_pidoutput - yaw_pitdoutput;
-		m3 = throttle_output + roll_pidoutput + pitch_pidoutput - yaw_pitdoutput;
-		m4 = throttle_output - roll_pidoutput + pitch_pidoutput + yaw_pitdoutput;
+		m1 = throttle_output + roll_pidoutput - pitch_pidoutput + yaw_pidoutput;
+		m2 = throttle_output - roll_pidoutput - pitch_pidoutput - yaw_pidoutput;
+		m3 = throttle_output + roll_pidoutput + pitch_pidoutput - yaw_pidoutput;
+		m4 = throttle_output - roll_pidoutput + pitch_pidoutput + yaw_pidoutput;
 
 		Motors_flush(m1, m2, m3, m4);
+
+}
+
+void ledshink()
+
+{
+
+	PWM pwm1(&PB8);
+
+	pwm1.begin(1000,20);
+
+  	pwm1.set_oc_polarity(1);
+
+	
+
+	
+
+	pwm1.set_duty(200);
+
+	delay_ms(200);
+
+	pwm1.set_duty(0);
+
+	delay_ms(200);
+
+	pwm1.set_duty(200);
+
+	delay_ms(200);
+
+	pwm1.set_duty(0);
+
+	delay_ms(200);
+
+	pwm1.set_duty(1000);
+
+	delay_ms(1000);
+
+	pwm1.set_duty(0);
+
+	delay_ms(200);
 
 }

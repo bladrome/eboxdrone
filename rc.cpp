@@ -134,7 +134,7 @@ void RCdata_compute(void)
 		int32_t avg = 0;
 		for(int i = 0; i < CHANNELS; ++i)
 		{
-				rcraw[i] = Get_pulse(i + 1);
+				rcraw[i] = Get_pulse(i + 1) / 5 - 1200;
 				avg = LPFRC[i] >> LPF_RC_FACTOR;
 				LPFRC[i] += rcraw[i] - avg;
 				RCDATA[i] = rcraw[i] < avg - 3 ? avg - 2 : rcraw[i] > avg + 3 ? avg + 2 : avg;
@@ -144,10 +144,10 @@ void RCdata_compute(void)
 }
 void Data2angle(void)
 {
-		RCANGLE[ROLL] = ANGLE_MAX * Cut_deadband(RCDATA[ROLL], 500, DEADBAND);
-		RCANGLE[PITCH] = ANGLE_MAX * Cut_deadband(RCDATA[PITCH], 500, DEADBAND);
-		RCANGLE[THROTTLE] = ANGLE_MAX * Cut_deadband(RCDATA[THROTTLE], 0, DEADBAND);
-		RCANGLE[YAW] = ANGLE_MAX * Cut_deadband(RCDATA[YAW], 500, DEADBAND);
+		RCANGLE[ROLL] = ANGLE_MAX * Cut_deadband(RCDATA[ROLL] - 500, 500, DEADBAND);
+		RCANGLE[PITCH] = ANGLE_MAX * Cut_deadband(RCDATA[PITCH] - 500, 500, DEADBAND);
+		RCANGLE[THROTTLE] = ANGLE_MAX * Cut_deadband(RCDATA[THROTTLE] - 500, 500, DEADBAND);
+		RCANGLE[YAW] = ANGLE_MAX * Cut_deadband(RCDATA[YAW] - 500, 500, DEADBAND);
 		
 }
 

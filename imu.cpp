@@ -203,7 +203,7 @@ uint8_t IMU_calibrate_tmp(void)
 		//3s 
 		static float accSum[3] = { 0,0,0 };
 		static float gyroSum[3] = { 0,0,0 };
-		int cnt = 300;
+		int cnt = 100;
 		uint8_t ret = 0;
 		uint8_t i = 0;
 

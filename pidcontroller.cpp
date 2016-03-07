@@ -1,7 +1,7 @@
 #include "pidcontroller.h"
 
 // EPID::constructor.
-EPID::EPID(double setpoint, double kp, double ki, double kd)
+EPID::EPID(float setpoint, float kp, float ki, float kd)
 {
 		set_pid(kp, ki, kd);
 		this->setpoint = setpoint;
@@ -20,14 +20,14 @@ EPID::EPID(double setpoint, double kp, double ki, double kd)
 		this->min_sample_time = 0;
 }
 
-EPID::EPID(double kp, double ki, double kd)
+EPID::EPID(float kp, float ki, float kd)
 {
 		set_pid(kp, ki, kd);
 		this->setpoint = 0;
 		this->input = 0.0f;
 		this->last_time = micros();
 		this->delta_time = 0;
-		this->output = input;
+		this->output = this->input;
 
 		this->error = this->pre_error = this->prepre_error = 0.0f;
 		this->proportional = this->integral = this->derivative = 0.0f;
@@ -39,20 +39,20 @@ EPID::EPID(double kp, double ki, double kd)
 		this->min_sample_time = 0;
 }
 
-double EPID::get_output()
+float EPID::get_output()
 {
 		return this->output;
 }
 
 
-void EPID::compute(double setpoint, double input, double& output)
+void EPID::compute(float setpoint, float input, float& output)
 {
 		EPID::set_point(setpoint);
-		EPID::compute(input, output, (double)0.0f);
+		EPID::compute(input, output, (uint64_t)0);
 }
 
 // compute output.
-void EPID::compute(double input, double& output, uint64_t deltatime)
+void EPID::compute(float input, float& output, uint64_t deltatime)
 {
 		uint64_t now = micros();
 
@@ -71,8 +71,8 @@ void EPID::compute(double input, double& output, uint64_t deltatime)
 		this->pre_error = this->error;
 		this->error = this->setpoint - this->input;
 
-		double inttmp = (this->integral) + (this->delta_time) * this->KI * (this->error + this->pre_error) / 2;
-		double intTerm = fabs(inttmp) > this->integ_limit ? this->integral : inttmp;
+		float inttmp = (this->integral) + (this->delta_time) * this->KI * (this->error + this->pre_error) / 2;
+		float intTerm = fabs(inttmp) > this->integ_limit ? this->integral : inttmp;
 		this->proportional = this->KP * this->error;
 		this->integral = intTerm;
 		this->derivative = this->KD * (((this->prepre_error - this->pre_error) + (this->pre_error - this->error)) / 2) / this->delta_time;
@@ -89,10 +89,10 @@ void EPID::compute(double input, double& output, uint64_t deltatime)
 }
 
 // compute output.
-double EPID::compute(double input, uint64_t deltatime)
+float EPID::compute(float input, uint64_t deltatime)
 {
 		
-		double output;
+		float output;
 		uint64_t now = micros();
 
 		this->input = input;
@@ -110,8 +110,8 @@ double EPID::compute(double input, uint64_t deltatime)
 		this->pre_error = this->error;
 		this->error = this->setpoint - this->input;
 
-		double inttmp = (this->integral) + (this->delta_time) * this->KI * (this->error + this->pre_error) / 2;
-		double intTerm = fabs(inttmp) > this->integ_limit ? this->integral : inttmp;
+		float inttmp = (this->integral) + (this->delta_time) * this->KI * (this->error + this->pre_error) / 2;
+		float intTerm = fabs(inttmp) > this->integ_limit ? this->integral : inttmp;
 		this->proportional = this->KP * this->error;
 		this->integral = intTerm;
 		this->derivative = this->KD * (((this->prepre_error - this->pre_error) + (this->pre_error - this->error)) / 2) / this->delta_time;
@@ -128,7 +128,7 @@ double EPID::compute(double input, uint64_t deltatime)
 }
 
 // reset PID.
-void EPID::set_pid(double kp, double ki, double kd)
+void EPID::set_pid(float kp, float ki, float kd)
 {
 		if(kp < 0 || ki < 0 || kd < 0)
 				return;
@@ -139,13 +139,13 @@ void EPID::set_pid(double kp, double ki, double kd)
 }
 
 // reset setpoint.
-void EPID::set_point(double setpoint)
+void EPID::set_point(float setpoint)
 {
 		this->setpoint = setpoint;
 }
 
 // constrain output between min and max.
-void EPID::set_output_limits(double min, double max)
+void EPID::set_output_limits(float min, float max)
 {
 		if(min > max)
 				return ;
@@ -154,7 +154,7 @@ void EPID::set_output_limits(double min, double max)
 }
 
 // set integral limit.
-void EPID::set_integral_limit(double limit)
+void EPID::set_integral_limit(float limit)
 {
 		this->integ_limit = fabs(limit);
 }
@@ -167,55 +167,55 @@ void EPID::set_minsample_time(uint64_t sampletime)
 
 
 // return KP.
-double EPID::get_kp()
+float EPID::get_kp()
 {
 		return this->KP;
 }
 
 // return KI.
-double EPID::get_ki()
+float EPID::get_ki()
 {
 		return this->KI;
 }
 
 // return KD.
-double EPID::get_kd()
+float EPID::get_kd()
 {
 		return this->KD;
 }
 
 // return setpoint.
-double EPID::get_setpoint()
+float EPID::get_setpoint()
 {
 		return this->setpoint;
 }
 
 // return delta time.
-double EPID::get_deltatime()
+float EPID::get_deltatime()
 {
 		return this->delta_time;
 }
 
 // return proportional.
-double EPID::get_proportional()
+float EPID::get_proportional()
 {
 		return this->proportional;
 }
 
 // return integral.
-double EPID::get_integral()
+float EPID::get_integral()
 {
 		return this->integral;
 }
 
 // return derivative.
-double EPID::get_derivative()
+float EPID::get_derivative()
 {
 		return this->derivative;
 }
 
 // return min sample time.
-double EPID::get_minsample_time()
+float EPID::get_minsample_time()
 {
 		return this->min_sample_time;
 }

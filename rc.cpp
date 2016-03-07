@@ -20,7 +20,7 @@ static int32_t LPFRC[CHANNELS] = {
 		THROTTLE_ZERO	
 };
 
- double RCANGLE[CHANNELS] = {
+float RCANGLE[CHANNELS] = {
 		0.0f
 };
 
@@ -148,7 +148,7 @@ void Data2angle(void)
 		RCANGLE[ROLL] = ANGLE_MAX * Cut_deadband(RCDATA[ROLL] - 500, 500, DEADBAND);
 		RCANGLE[PITCH] = ANGLE_MAX * Cut_deadband(RCDATA[PITCH] - 500, 500, DEADBAND);
 		RCANGLE[YAW] = ANGLE_MAX * Cut_deadband(RCDATA[YAW] - 500, 500, DEADBAND);
-		RCANGLE[THROTTLE] = ANGLE_MAX * Cut_deadband(RCDATA[THROTTLE], 0, DEADBAND);
+		RCANGLE[THROTTLE] = ANGLE_MAX * Cut_deadband(RCDATA[THROTTLE], 0, 10);
 		
 }
 

@@ -15,7 +15,7 @@
 
 
 extern  int32_t RCDATA[CHANNELS];
-extern  double  RCANGLE[CHANNELS];
+extern  float  RCANGLE[CHANNELS];
 
 enum
 {

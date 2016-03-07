@@ -3,11 +3,11 @@
 #include "ebox.h"
 
 
-#define  DEADBAND			(6			)
+#define  DEADBAND			(8			)
 #define  ANGLE_MAX			(40			)
 #define  YAW_RATE_MAX		(180  /	  PI)
 #define  CHANNELS			(4			)
-#define  LPF_RC_FACTOR		(3			)
+#define  LPF_RC_FACTOR		(2			)
 #define  ROLL_ZERO			(500		)
 #define  PITCH_ZERO			(500		)
 #define  THROTTLE_ZERO		(0			)

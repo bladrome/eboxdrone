@@ -110,6 +110,10 @@ void IMU_update_sensors(void)
 
 		//read raw
 		mpu.get_data(ACCEL_XOUT_H, imu.accADC, 3);
+//	uart1.printf("%d \n\r", imu.accADC[0]);
+//	uart1.printf("%d \n\r", imu.accADC[1]);
+//	uart1.printf("%d \n\r", imu.accADC[2]);
+	//delay_ms(1000);
 		mpu.get_data(GYRO_XOUT_H, imu.gyroADC, 3);
 		//tutn to physical
 		for(int i = 0; i < 3; ++i)
@@ -199,15 +203,15 @@ uint8_t IMU_calibrate_tmp(void)
 		//3s 
 		static float accSum[3] = { 0,0,0 };
 		static float gyroSum[3] = { 0,0,0 };
-		int cnt = 800;
+		int cnt = 300;
 		uint8_t ret = 0;
 		uint8_t i = 0;
 
 
 		for(i = 0; i < 3; i++)
 		{
-				accsum[i] = 0;
-				gyrosum[i] = 0;
+				accSum[i] = 0;
+				gyroSum[i] = 0;
 				imu.ready = 0;
 		}
 
@@ -230,7 +234,7 @@ uint8_t IMU_calibrate_tmp(void)
 
 		}
 
-		cnt = 800;
+		cnt = 300;
 
 		for(i=0;i<3;i++)
 		{
@@ -240,7 +244,6 @@ uint8_t IMU_calibrate_tmp(void)
 
 		imu.accOffset[2] = imu.accOffset[2] - CONSTANTS_G;
 
-		calibrating = 0;
 
 		imu.ready = 1;
 

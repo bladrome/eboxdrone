@@ -16,7 +16,7 @@ EPID::EPID(float setpoint, float kp, float ki, float kd)
 		this->error_weight = 1;
 		this->pre_error_weight = 0;
 
-		this->min_output = 0;
+		this->min_output = -1000;
 		this->max_output = 1000;
 		this->integ_max_limit = this->max_output / 5;
 		this->integ_min_limit = -this->integ_max_limit;
@@ -39,7 +39,7 @@ EPID::EPID(float kp, float ki, float kd)
 		this->error = this->pre_error = this->prepre_error = 0.0f;
 		this->proportional = this->integral = this->derivative = 0.0f;
 		
-		this->min_output = 0;
+		this->min_output = -1000;
 		this->max_output = 1000;
 		this->integ_max_limit = this->max_output / 5;
 		this->integ_min_limit = -this->integ_max_limit;

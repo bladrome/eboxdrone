@@ -11,6 +11,8 @@ static float pitch_pidoutput;
 static float yaw_pidoutput;
 static float throttle_output;
 
+void Set_PID_limits(void);
+
 void Angle_control(void);
 void Rate_control(void);
 void Motors_control(void);
@@ -69,6 +71,22 @@ int main()
 		}
 }
 
+void Set_PID_limits(void)
+{
+		roll_angle_pid.set_output_limits(-600, 600);
+		roll_angle_pid.set_integral_limit(-100, 100);
+		pitch_angle_pid.set_output_limits(-600, 600);
+		pitch_angle_pid.set_integral_limit(-100, 100);
+		yaw_angle_pid.set_output_limits(-600, 600);
+		yaw_angle_pid.set_integral_limit(-100, 100);
+
+		roll_rate_pid.set_output_limits(-600, 600);
+		roll_rate_pid.set_integral_limit(-100, 100);
+		pitch_rate_pid.set_output_limits(-600, 600);
+		pitch_rate_pid.set_integral_limit(-100, 100);
+		yaw_rate_pid.set_output_limits(-600, 600);
+		yaw_rate_pid.set_integral_limit(-100, 100);
+}
 
 
 void Angle_control(void)

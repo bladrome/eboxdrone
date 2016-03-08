@@ -19,7 +19,7 @@ EPID::EPID(float setpoint, float kp, float ki, float kd)
 		this->min_output = 0;
 		this->max_output = 1000;
 		this->integ_max_limit = this->max_output / 5;
-		this->integ_min_limit = -this->integ_limit_max;
+		this->integ_min_limit = -this->integ_max_limit;
 
 		this->min_sample_time = 0;
 }
@@ -42,7 +42,7 @@ EPID::EPID(float kp, float ki, float kd)
 		this->min_output = 0;
 		this->max_output = 1000;
 		this->integ_max_limit = this->max_output / 5;
-		this->integ_min_limit = -this->integ_limit_max;
+		this->integ_min_limit = -this->integ_max_limit;
 
 		this->min_sample_time = 0;
 }
@@ -118,7 +118,7 @@ void EPID::set_point(float setpoint)
 }
 
 // set error_weight
-void set_error_weight(float error_weight)
+void EPID::set_error_weight(float error_weight)
 {
 		if( error_weight < 0 || error_weight > 1 )
 				return;
@@ -135,9 +135,10 @@ void EPID::set_output_limits(float min, float max)
 }
 
 // set integral limit.
-void EPID::set_integral_limit(float limit)
+void EPID::set_integral_limit(float min, float max)
 {
-		this->integ_limit = fabs(limit);
+		this->integ_min_limit = min;
+		this->integ_max_limit = max;
 }
 
 // set min sample time.
@@ -202,7 +203,7 @@ float EPID::get_minsample_time()
 }
 
 // return error weight
-float get_error_weight()
+float EPID::get_error_weight()
 {
 		return this->error_weight;
 }

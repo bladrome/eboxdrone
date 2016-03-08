@@ -24,7 +24,6 @@ void setup(void)
 		ebox_init();
 		uart1.begin(256000);
 		IMU_init();
-//		uart1.printf("%6f%6f%6f%6f\n", pitch_pidoutput, roll_pidoutput, throttle_output, yaw_pidoutput);
 		IMU_calibrate_tmp();
 		imu.ready = 1;
 		RC_init();
@@ -74,7 +73,7 @@ int main()
 
 void Angle_control(void)
 {
-	float tmp1,tmp2;
+		float tmp1,tmp2;
 		roll_angle_pid.compute(RCANGLE[ROLL], imu.roll, tmp1);
 		pitch_angle_pid.compute(RCANGLE[PITCH], imu.pitch, tmp2);
 }
@@ -105,7 +104,6 @@ void Motors_control(void)
 }
 
 void Led_shink(void)
-
 {
 
 		PWM pwm1(&PB8);

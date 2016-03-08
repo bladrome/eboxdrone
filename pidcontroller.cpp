@@ -8,14 +8,18 @@ EPID::EPID(float setpoint, float kp, float ki, float kd)
 		this->input = 0.0f;
 		this->last_time = micros();
 		this->delta_time = 0;
-		this->output = input;
+		this->output = this->input;
 
 		this->error = this->pre_error = this->prepre_error = 0.0f;
 		this->proportional = this->integral = this->derivative = 0.0f;
 		
+		this->error_weight = 1;
+		this->pre_error_weight = 0;
+
 		this->min_output = 0;
 		this->max_output = 1000;
-		this->integ_limit  = fabs(this->max_output);
+		this->integ_max_limit = this->max_output / 5;
+		this->integ_min_limit = -this->integ_limit_max;
 
 		this->min_sample_time = 0;
 }
@@ -29,12 +33,16 @@ EPID::EPID(float kp, float ki, float kd)
 		this->delta_time = 0;
 		this->output = this->input;
 
+		this->error_weight = 1;
+		this->pre_error_weight = 0;
+
 		this->error = this->pre_error = this->prepre_error = 0.0f;
 		this->proportional = this->integral = this->derivative = 0.0f;
 		
 		this->min_output = 0;
 		this->max_output = 1000;
-		this->integ_limit  = fabs(this->max_output);
+		this->integ_max_limit = this->max_output / 5;
+		this->integ_min_limit = -this->integ_limit_max;
 
 		this->min_sample_time = 0;
 }
@@ -45,10 +53,10 @@ float EPID::get_output()
 }
 
 
-void EPID::compute(float setpoint, float input, float& output)
+void EPID::compute(float setpoint, float input, float& output, uint64_t deltatime)
 {
 		EPID::set_point(setpoint);
-		EPID::compute(input, output, (uint64_t)0);
+		EPID::compute(input, output, deltatime);
 }
 
 // compute output.
@@ -71,11 +79,14 @@ void EPID::compute(float input, float& output, uint64_t deltatime)
 		this->pre_error = this->error;
 		this->error = this->setpoint - this->input;
 
-		float inttmp = (this->integral) + (this->delta_time) * this->KI * (this->error + this->pre_error) / 2;
-		float intTerm = fabs(inttmp) > this->integ_limit ? this->integral : inttmp;
-		this->proportional = this->KP * this->error;
-		this->integral = intTerm;
-		this->derivative = this->KD * (((this->prepre_error - this->pre_error) + (this->pre_error - this->error)) / 2) / this->delta_time;
+		float tmperror = (this->pre_error * this->pre_error_weight + this->error * this->error_weight);
+		this->proportional = this->KP * tmperror;
+		float tmpintegral = this->delta_time * this->KI * tmperror;
+		if( this->integ_min_limit <= tmpintegral && tmpintegral <= this->integ_max_limit )
+				this->integral = tmpintegral;
+		float tmpdererror = (this->error - this->pre_error) * this->error_weight + \
+							(this->pre_error - this->prepre_error) * this->pre_error_weight;
+		this->derivative = this->KD * tmpdererror / this->delta_time;
 
 		this->output = this->proportional + this->integral + this->derivative;
 
@@ -88,45 +99,7 @@ void EPID::compute(float input, float& output, uint64_t deltatime)
 		return ;
 }
 
-// compute output.
-float EPID::compute(float input, uint64_t deltatime)
-{
-		
-		float output;
-		uint64_t now = micros();
-
-		this->input = input;
-		this->delta_time = deltatime == 0 ? now - this->last_time : deltatime;
-		this->last_time = now;
-
-		if(this->delta_time < this->min_sample_time)
-		{
-				output = this->output;
-
-				return output;
-		}
-
-		this->prepre_error = this->pre_error;
-		this->pre_error = this->error;
-		this->error = this->setpoint - this->input;
-
-		float inttmp = (this->integral) + (this->delta_time) * this->KI * (this->error + this->pre_error) / 2;
-		float intTerm = fabs(inttmp) > this->integ_limit ? this->integral : inttmp;
-		this->proportional = this->KP * this->error;
-		this->integral = intTerm;
-		this->derivative = this->KD * (((this->prepre_error - this->pre_error) + (this->pre_error - this->error)) / 2) / this->delta_time;
-
-		this->output = this->proportional + this->integral + this->derivative;
-
-		if(this->output > this->max_output)
-				this->output = this->max_output;
-		if(this->output < this->min_output)
-				this->output = this->min_output;
-		output = this->output;
-
-		return output;
-}
-
+#ifdef GETVERBOSE
 // reset PID.
 void EPID::set_pid(float kp, float ki, float kd)
 {
@@ -144,6 +117,14 @@ void EPID::set_point(float setpoint)
 		this->setpoint = setpoint;
 }
 
+// set error_weight
+void set_error_weight(float error_weight)
+{
+		if( error_weight < 0 || error_weight > 1 )
+				return;
+		this->error_weight = error_weight;
+		this->pre_error_weight = 1 - this->error_weight;
+}
 // constrain output between min and max.
 void EPID::set_output_limits(float min, float max)
 {
@@ -220,3 +201,10 @@ float EPID::get_minsample_time()
 		return this->min_sample_time;
 }
 
+// return error weight
+float get_error_weight()
+{
+		return this->error_weight;
+}
+
+#endif

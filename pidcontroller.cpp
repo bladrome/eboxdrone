@@ -78,18 +78,24 @@ void EPID::compute(float input, float& output, uint64_t deltatime)
 		this->prepre_error = this->pre_error;
 		this->pre_error = this->error;
 		this->error = this->setpoint - this->input;
-
+		// proportional
 		float tmperror = (this->pre_error * this->pre_error_weight + this->error * this->error_weight);
 		this->proportional = this->KP * tmperror;
-		float tmpintegral = this->delta_time * this->KI * tmperror;
-		if( this->integ_min_limit <= tmpintegral && tmpintegral <= this->integ_max_limit )
+		// integral
+		float tmpintegral = this->integral + this->delta_time * this->KI * tmperror;
+		if(tmpintegral < this->integ_min_limit)
+				this->integral = this->integ_min_limit;
+		else if(tmpintegral > this->integ_min_limit)
+				this->integral = this->integ_max_limit;
+		else
 				this->integral = tmpintegral;
+		// derivative
 		float tmpdererror = (this->error - this->pre_error) * this->error_weight + \
 							(this->pre_error - this->prepre_error) * this->pre_error_weight;
 		this->derivative = this->KD * tmpdererror / this->delta_time;
-
+		// MIX
 		this->output = this->proportional + this->integral + this->derivative;
-
+		// limit output
 		if(this->output > this->max_output)
 				this->output = this->max_output;
 		if(this->output < this->min_output)

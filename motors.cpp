@@ -12,7 +12,7 @@ void Motors_init(void)
 {
 		for(int i = 0; i < 4; ++i)
 		{
-				motors[i].begin(100, 0);
+				motors[i].begin(50, 0);
 		}
 		
 		return ;

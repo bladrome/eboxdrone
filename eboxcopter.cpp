@@ -24,13 +24,14 @@ void Uart_debugForMat(void);
 void setup(void)
 {
 		ebox_init();
-		uart1.begin(256000);
+		uart1.begin(115200);
 		IMU_init();
 		IMU_calibrate_tmp();
 		imu.ready = 1;
 		RC_init();
 		Motors_init();
-		Motors_start(0);
+		Motors_start(50);
+		Set_PID_limits();
 		Timer_init();
 }
 
@@ -48,7 +49,7 @@ int main()
 
 						IMU_estimate();
 
-						Angle_control();
+				//		Angle_control();
 
 						Motors_control();
 
@@ -98,9 +99,13 @@ void Angle_control(void)
 void Rate_control(void)
 {
 		float tmp1, tmp2, tmp3;
-		roll_rate_pid.compute(roll_angle_pid.get_output(), (double)(imu.gyro[ROLL] * 180 / PI), tmp1);
-		pitch_rate_pid.compute(pitch_angle_pid.get_output(), (double)(imu.gyro[PITCH] * 180 / PI), tmp2);
-		yaw_rate_pid.compute(yaw_angle_pid.get_output(), (double)(imu.gyro[YAW] * 180 / PI), tmp3);
+//		roll_rate_pid.compute(roll_angle_pid.get_output(), (double)(imu.gyro[ROLL] * 180 / PI), tmp1);
+//		pitch_rate_pid.compute(pitch_angle_pid.get_output(), (double)(imu.gyro[PITCH] * 180 / PI), tmp2);
+//		yaw_rate_pid.compute(yaw_angle_pid.get_output(), (double)(imu.gyro[YAW] * 180 / PI), tmp3);
+		roll_rate_pid.compute(RCANGLE[ROLL], (float)(imu.gyro[ROLL] * 180 / PI), tmp1);
+		pitch_rate_pid.compute(RCANGLE[PITCH], (float)(imu.gyro[PITCH] * 180 / PI), tmp2);
+		yaw_rate_pid.compute(RCANGLE[YAW], (float)(imu.gyro[YAW] * 180 / PI), tmp3);
+
 }
 void Motors_control(void)
 {
@@ -147,14 +152,14 @@ void Led_shink(void)
 void Uart_debugForRead(void)
 {
 		uart1.printf("-------------------\n");
-		uart1.printf("RCdata   :%10d       %10d        %10d       %10d\n", RCDATA[0], RCDATA[1], RCDATA[2], RCDATA[3]);
-		uart1.printf("RCangle  :%10.2f     %10.2f      %10.2f     %10.2f\n", RCANGLE[0], RCANGLE[1], RCANGLE[2], RCANGLE[3]);
-		uart1.printf("ADC      :%10d       %10d        %10d\n",     imu.accADC[0], imu.accADC[1], imu.accADC[2]);
-		uart1.printf("Acc      :%10.2f	   %10.2f      %10.2f      \n",imu.accb[0], imu.accb[1], imu.accb[2]);
-		uart1.printf("Quad	   :%10.2f     %10.2f      %10.2f     %10.2f\n",imu.q[0], imu.q[1], imu.q[2]);
-		uart1.printf("Euler    :%10.2f     %10.2f      %10.2f      \n", imu.roll, imu.pitch, imu.yaw);
-		uart1.printf("PIDoutput:%10.2f     %10.2f      %10.2f     %10.2f\n", pitch_pidoutput, roll_pidoutput, throttle_output, yaw_pidoutput);
-		uart1.printf("Ratepid  :%10d	   %10d		   %10d        \n",roll_rate_pid.get_output(),pitch_rate_pid.get_output() , yaw_rate_pid.get_output());
+		uart1.printf("RCdata   :%-20d%-20d%-20d%-20d\n", RCDATA[0], RCDATA[1], RCDATA[2], RCDATA[3]);
+		uart1.printf("RCangle  :%-20.2f%-20.2f%-20.2f%-20.2f\n", RCANGLE[0], RCANGLE[1], RCANGLE[2], RCANGLE[3]);
+		uart1.printf("ADC      :%-20d%-20d%-20d\n",     imu.accADC[0], imu.accADC[1], imu.accADC[2]);
+		uart1.printf("Acc      :%-20.2f%-20.2f%-20.2f\n",imu.accb[0], imu.accb[1], imu.accb[2]);
+		uart1.printf("Quad     :%-20.2f%-20.2f%-20.2f%-20.2f\n",imu.q[0], imu.q[1], imu.q[2]);
+		uart1.printf("Euler    :%-20.2f%-20.2f%-20.2f\n", imu.roll, imu.pitch, imu.yaw);
+		uart1.printf("PIDoutput:%-20.2f%-20.2f%-20.2f%-20.2f\n", pitch_pidoutput, roll_pidoutput, throttle_output, yaw_pidoutput);
+		uart1.printf("Ratepid  :%-20.2f%-20.2f%-20.2f\n",roll_rate_pid.get_output(),pitch_rate_pid.get_output() , yaw_rate_pid.get_output());
 		uart1.printf("-------------------\n\n\n\n");
 
 }

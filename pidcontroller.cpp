@@ -85,7 +85,7 @@ void EPID::compute(float input, float& output, uint64_t deltatime)
 		float tmpintegral = this->integral + this->delta_time * this->KI * tmperror;
 		if(tmpintegral < this->integ_min_limit)
 				this->integral = this->integ_min_limit;
-		else if(tmpintegral > this->integ_min_limit)
+		else if(tmpintegral > this->integ_max_limit)
 				this->integral = this->integ_max_limit;
 		else
 				this->integral = tmpintegral;

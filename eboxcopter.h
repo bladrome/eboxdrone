@@ -7,6 +7,7 @@
 #include "motors.h"
 #include "filter.h"
 #include "rc.h"
+#include "led.h"
 #include "imu.h"
 #include "estimate.h"
 #include "pidcontroller.h"

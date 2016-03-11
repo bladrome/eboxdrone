@@ -1,3 +1,5 @@
+#ifndef LED_H
+#define LED_H
 #include "ebox.h"
 
 enum led_enum{
@@ -9,3 +11,4 @@ extern void Led_init(void);
 extern void Led_event_flasher(int delay);
 
 
+#endif

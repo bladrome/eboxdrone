@@ -1,12 +1,14 @@
 #include "led.h"
 
-#define led   PB8
+#define		SLOW_FLASH	(200)
+#define		FAST_FLASH	(20)
 
-#define		SLOW_FLASH	(100)
-#define		FAST_FLASH	(600)
+#define led   PB8
 
 void Led_init(void);
 void Led_flasher(int delay);
+
+
 
 void Led_init(void)
 {
@@ -27,23 +29,19 @@ void Led_event_flasher(int event)
 {
 		int fast = 0;
 		int slow = 0;
-		Led_flasher(200);
 		switch(event)
 		{
 				case IMU_CALIBRATION:
 						{
-								fast = 1;
-								slow = 3;
+								slow = 1;
 								while(slow--)
-										Led_flasher(SLOW_FLASH);
-								while(fast--)
-										Led_flasher(FAST_FLASH);
+										Led_flasher( 6 * SLOW_FLASH);
 								break;
 						}
 				case ACC_CALIBRATION:
 						{
-								fast = 2;
-								slow = 3;
+								fast = 0;
+								slow = 5;
 								while(slow--)
 										Led_flasher(SLOW_FLASH);
 								while(fast--)
@@ -53,8 +51,8 @@ void Led_event_flasher(int event)
 						}
 				case GYRO_CALIBRATION:
 						{
-								fast = 3;
-								slow = 3;
+								fast = 30;
+								slow = 0;
 								while(slow--)
 										Led_flasher(SLOW_FLASH);
 								while(fast--)

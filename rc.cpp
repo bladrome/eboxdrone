@@ -169,7 +169,7 @@ double Cut_deadband(double from, double to, double deadband)
 {
 		if (from > deadband)
 				return (from - deadband) / (to - deadband);
-		else if(from < deadband)
+		else if(from < -deadband)
 				return (from + deadband) / (to - deadband);
 		else
 				return 0.0f;

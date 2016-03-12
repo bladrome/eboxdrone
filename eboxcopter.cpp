@@ -74,18 +74,18 @@ int main()
 
 void Set_PID_limits(void)
 {
-		roll_angle_pid.set_output_limits(-600, 600);
+		roll_angle_pid.set_output_limits(-200, 200);
 		roll_angle_pid.set_integral_limit(-100, 100);
-		pitch_angle_pid.set_output_limits(-600, 600);
+		pitch_angle_pid.set_output_limits(-200, 200);
 		pitch_angle_pid.set_integral_limit(-100, 100);
-		yaw_angle_pid.set_output_limits(-600, 600);
+		yaw_angle_pid.set_output_limits(-200, 200);
 		yaw_angle_pid.set_integral_limit(-100, 100);
 
-		roll_rate_pid.set_output_limits(-600, 600);
+		roll_rate_pid.set_output_limits(-200, 200);
 		roll_rate_pid.set_integral_limit(-100, 100);
-		pitch_rate_pid.set_output_limits(-600, 600);
+		pitch_rate_pid.set_output_limits(-200, 200);
 		pitch_rate_pid.set_integral_limit(-100, 100);
-		yaw_rate_pid.set_output_limits(-600, 600);
+		yaw_rate_pid.set_output_limits(-200, 200);
 		yaw_rate_pid.set_integral_limit(-100, 100);
 }
 

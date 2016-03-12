@@ -13,13 +13,13 @@
 #include "pidcontroller.h"
 
 
-EPID pitch_angle_pid(0, 0, 0);
-EPID roll_angle_pid(0, 0, 0);
-EPID yaw_angle_pid(0, 0, 0);
+EPID pitch_angle_pid(1.4,0.00000001,0);
+EPID roll_angle_pid(1.4,0.00000001,0);
+EPID yaw_angle_pid(0,0,0);
 
-EPID pitch_rate_pid(10, 0, 0);
-EPID roll_rate_pid(10, 0, 0);
-EPID yaw_rate_pid(0, 0, 0);
+EPID pitch_rate_pid(6,0.00001,0.00002);
+EPID roll_rate_pid(6,0.00001,0.00002);
+EPID yaw_rate_pid(0,0,0);
 
 
 #endif

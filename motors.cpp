@@ -45,7 +45,7 @@ void Motors_flush(int motor1,
 				|| motor3 > 1000
 				|| motor4 > 1000 )
 		{
-				over = max(motors1 - 1000,
+				over = max(motor1 - 1000,
 								max(motor2 - 1000, 
 										max(motor3 - 1000,
 												motor4 - 1000)));

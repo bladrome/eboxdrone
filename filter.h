@@ -4,6 +4,7 @@
 class ELPF
 {
 		public:
+				// Easy to know what these parameter is.
 				ELPF(double sample_freq = 100, double cutoff_freq = 30);
 				
 				void reset(double sample_freq, double cutoff_freq);

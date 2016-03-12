@@ -1,6 +1,12 @@
 #ifndef ESTIMATE_H
 #define	ESTIMATE_H
 
+// TODO:
+// Maybe it is neccessary to specify a calibration, such as 
+//		ACC_calibration()
+//		GYro_calibration()
+// Make a simple but efficent interface of above.
+
 void IMU_estimate(void);
 
 static float	inv_sqrt(float number);

@@ -74,4 +74,3 @@ void ELPF::set_cutoff_frequency(double cutoff_freq)
 
 }
 
-

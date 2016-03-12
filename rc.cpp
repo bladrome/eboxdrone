@@ -1,6 +1,21 @@
 #include "ebox.h"
+#include "led.h"
 #include "rc.h"
 
+#define STICK_HIGH			(950)
+#define STICK_LOW			(50)
+#define ROLL_LOW			(1 << (2 * ROLL))
+#define ROLL_HIGH			(2 << (2 * ROLL))
+#define ROLL_MED			(3 << (2 * ROLL))
+#define PITCH_LOW			(1 << (2 * PITCH))
+#define PITCH_HIGH			(2 << (2 * PITCH))
+#define PITCH_MED			(3 << (2 * PITCH))
+#define YAW_LOW				(1 << (2 * YAW))
+#define YAW_HIGH			(2 << (2 * YAW))
+#define YAW_MED				(3 << (2 * YAW))
+#define THROTTLE_LOW		(1 << (2 * THROTTLE))
+#define THROTTLE_HIGH		(2 << (2 * THROTTLE))
+#define THROTTLE_MED		(3 << (2 * THROTTLE))
 
 
 const int fracfreq = 1;
@@ -48,12 +63,10 @@ void chan4_mesure_frq(void);//输入捕获中断事件
 void chan4_update_event(void);
 
 uint32_t Get_pulse(uint8_t channel);
-
-void RCdata_compute(void);
-
-void Data2angle(void);
-
-double Cut_deadband(double from, double to, double deadband);
+void	RCdata_compute(void);
+void	Data2angle(void);
+double	Cut_deadband(double from, double to, double deadband);
+int		RC_gesture(void);	
 
 void RC_init(void)
 {
@@ -214,6 +227,47 @@ uint32_t Get_pulse(uint8_t channel)
 		}
 		
 		return ret;
+}
+
+
+int	RC_gesture(void)
+{
+		static int RC_command_delay = 0;
+		static uint8_t RCcommand = 0;
+		uint8_t Rctmp = 0;
+		for(int i = 0; i < CHANNELS; ++i)
+		{
+				// But if >> product 1 as default, better to pick it up.
+				Rctmp >>= 2;
+				if( RCDATA[i] > STICK_HIGH )
+						Rctmp |= 0x80;
+				if( RCDATA[i] < STICK_LOW )
+						Rctmp |= 0x40;
+		}
+		if (Rctmp == RCcommand)
+		{
+				if( RC_command_delay < 30 )
+						RC_command_delay ++;
+				else
+				{
+						RC_command_delay = 0;
+						if(RCcommand == THROTTLE_LOW + YAW_HIGH + PITCH_MED + ROLL_MED )
+								return -1; // TO ARM
+						if(RCcommand == THROTTLE_LOW + YAW_LOW +  PITCH_MED + ROLL_MED )
+								return -1; // TO DESARMED
+						if(RCcommand == THROTTLE_LOW + YAW_LOW +  PITCH_LOW + ROLL_MED )
+								return -1; // IMU Calibrate;
+						// Add other RC command gestures.
+
+				}
+		}
+		else
+		{
+				RC_command_delay = 0;
+		}
+		RCcommand = Rctmp;
+
+		return -1;
 }
 
 

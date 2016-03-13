@@ -21,7 +21,7 @@ void Led_shink(void);
 void Uart_debugForRead(void);
 void Uart_debugForMat(void);
 
-float pwmo0,pwmo1,pwmo2,pwmo3;
+int pwmo0,pwmo1,pwmo2,pwmo3;
 void setup(void)
 {
 		ebox_init();
@@ -42,7 +42,7 @@ int main()
 
 		while(true)
 		{
-				//Uart_debugForRead();
+			//	Uart_debugForRead();
 				Uart_debugForMat();
 				if(loop_100HZ_flag)
 				{
@@ -165,15 +165,13 @@ void Uart_debugForRead(void)
 		uart1.printf("Ratepid  :%-20.2f%-20.2f%-20.2f\n",roll_rate_pid.get_output(),pitch_rate_pid.get_output() , yaw_rate_pid.get_output());
 		uart1.printf("anglepid :%-20.2f%-20.2f%-20.2f\n",roll_angle_pid.get_output(),pitch_angle_pid.get_output(),yaw_angle_pid.get_output());
 	    uart1.printf("micro    :%-20d\n", micros());	
-	uart1.printf("-------------------\n\n\n\n");
+		uart1.printf("-------------------\n\n\n\n");
 
 }
 
 void Uart_debugForMat(void)
 {
-	uart1.printf("%-20.2f%-20.2f%-20.2f%-20.2f%-20.2f%-20.2f%-20.2f%-20.2f%-20.2f\
-	%-20.2f%-20.2f-20.2f%-20.2f%-20.2f\n",
-	RCANGLE[0], RCANGLE[1], RCANGLE[2], RCANGLE[3],imu.roll, imu.pitch, imu.yaw,
-	roll_angle_pid.get_output(),pitch_angle_pid.get_output(),roll_rate_pid.get_output(),
-	pitch_rate_pid.get_output(),pwmo0,pwmo1,pwmo2,pwmo3);
+	uart1.printf("%-20.2f%-20.2f%-20.2f%-20.2f%-20.2f%-20.2f",RCANGLE[0], RCANGLE[1], RCANGLE[2], RCANGLE[3],imu.roll, imu.pitch);
+	uart1.printf("%-20.2f%-20.2f%-20.2f%-20.2f%-20.2f",imu.yaw, roll_angle_pid.get_output(),pitch_angle_pid.get_output(),roll_rate_pid.get_output(),pitch_rate_pid.get_output());
+	uart1.printf("%-20d%-20d%-20d%-20d\r\n",pwmo0,pwmo1,pwmo2,pwmo3);
 }

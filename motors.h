@@ -2,7 +2,7 @@
 #define MOTORS_H
 #include "ebox.h"
 
-#define BATTERY_COMPENSATE_MAX	(200)
+#define BATTERY_COMPENSATE_MAX	(80)
 #define	LOW_BATTERY				(1500)
 #define	MED_BATTERY				(2500)
 #define HIGH_BATTERY			(3300)

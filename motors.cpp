@@ -105,9 +105,9 @@ int Battery_motors_compensate(void)
 		int volt = 	analog_read_voltage(battery) - MED_BATTERY;
 		float rate;
 		if(volt > 0)
-				rate = (float)(volt / HIGH_BATTERY - MED_BATTERY);
+				rate = (float)((float)volt / (HIGH_BATTERY - MED_BATTERY));
 		else
-				rate = (float)(volt / MED_BATTERY - LOW_BATTERY);
+				rate = (float)((float)volt / (MED_BATTERY - LOW_BATTERY));
 
 		return (BATTERY_COMPENSATE_MAX * rate);
 }

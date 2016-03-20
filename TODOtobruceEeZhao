@@ -1,0 +1,13 @@
+# Text File
+# AUTHOR:   blkcat
+# FILE:     TODOtobruceEeZhao
+# ROLE:     TODO (some explanation)
+# CREATED:  2016-03-20 18:36:26
+# MODIFIED: 2016-03-20 18:41:01
+
+1 Test led (PB8 for default)
+2 Test RC gesture(You can try it to trigger different patterns of led)
+3 Use RC gesture to calibrate IMU
+4 Drive a ESC 
+5 DEBUG pid with f450 indeed
+

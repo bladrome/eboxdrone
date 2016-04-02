@@ -1,0 +1,32 @@
+TIMER:
+		LOOP TIME is a severe problem, 50? 100? 200? 
+
+RC:
+		More precise measurement is necessary.
+		Restruct it if sth is terrible.
+
+		Function constrain() and map() are better than casual casts.
+
+PID:
+		Simulation with more modules is a good way to test itself.
+
+MOTORS:
+		Function constrain() and map() are better than casual casts.
+		Battery's compensation need more tests.
+
+LOG:
+		Find a reliable flash address.
+
+LED:
+		Patterns of flasher could be more comfortable.
+
+FILTER:
+		Compensating filter and Kalman filter is more attrctive and feasiblle.
+
+
+OTHERS:
+		Pondering...
+
+
+		
+		

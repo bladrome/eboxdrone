@@ -1,21 +1,23 @@
 #include "ebox.h"
 #include "led.h"
 #include "rc.h"
+#include "imu.h"
+#include "eboxdronedebug.h"
 
 #define STICK_HIGH			(950)
 #define STICK_LOW			(50)
 #define ROLL_LOW			(1 << (2 * ROLL))
 #define ROLL_HIGH			(2 << (2 * ROLL))
-#define ROLL_MED			(3 << (2 * ROLL))
+#define ROLL_MED			(0 << (2 * ROLL))
 #define PITCH_LOW			(1 << (2 * PITCH))
 #define PITCH_HIGH			(2 << (2 * PITCH))
-#define PITCH_MED			(3 << (2 * PITCH))
+#define PITCH_MED			(0 << (2 * PITCH))
 #define YAW_LOW				(1 << (2 * YAW))
 #define YAW_HIGH			(2 << (2 * YAW))
-#define YAW_MED				(3 << (2 * YAW))
+#define YAW_MED				(0 << (2 * YAW))
 #define THROTTLE_LOW		(1 << (2 * THROTTLE))
 #define THROTTLE_HIGH		(2 << (2 * THROTTLE))
-#define THROTTLE_MED		(3 << (2 * THROTTLE))
+#define THROTTLE_MED		(0 << (2 * THROTTLE))
 
 
 const int fracfreq = 1;
@@ -144,8 +146,12 @@ int main(void)
 
 void RCdata_compute(void)
 {
+	#if EBOXDRONEDEBUG == 1
+		rccomputes = micros();
+	#endif
 		int rcraw[CHANNELS];
 		int32_t avg = 0;
+
 		for(int i = 0; i < CHANNELS; ++i)
 		{
 				rcraw[i] = Get_pulse(i + 1) / 5 - 1200;
@@ -154,7 +160,11 @@ void RCdata_compute(void)
 				RCDATA[i] = rcraw[i] < avg - 3 ? avg - 2 : rcraw[i] > avg + 3 ? avg + 2 : avg;
 		}
 		Data2angle();
-
+		RC_gesture();
+		
+	#if EBOXDRONEDEBUG == 1
+		rccomputee = micros();
+	#endif
 }
 void Data2angle(void)
 {
@@ -176,6 +186,9 @@ double Cut_deadband(double from, double to, double deadband)
 }
 uint32_t Get_pulse(uint8_t channel)
 {
+	#if EBOXDRONEDEBUG == 1
+		rccaptures = micros();
+	#endif
 		float ret = 0;
 		switch(channel)
 		{
@@ -226,14 +239,22 @@ uint32_t Get_pulse(uint8_t channel)
 						}
 		}
 		
+	#if EBOXDRONEDEBUG == 1
+		rccapturee = micros();
+	#endif
+		
 		return ret;
 }
 
-
+//		static int RC_command_delay = 0;
+//		static uint8_t RCcommand = 0;
 int	RC_gesture(void)
 {
-		static int RC_command_delay = 0;
-		static uint8_t RCcommand = 0;
+//		static int RC_command_delay = 0;
+//		static uint8_t RCcommand = 0;
+	#if EBOXDRONEDEBUG == 1
+		rchands = micros();
+	#endif
 		uint8_t Rctmp = 0;
 		for(int i = 0; i < CHANNELS; ++i)
 		{
@@ -246,17 +267,29 @@ int	RC_gesture(void)
 		}
 		if (Rctmp == RCcommand)
 		{
-				if( RC_command_delay < 30 )
+				if( RC_command_delay < 5 )
 						RC_command_delay ++;
 				else
 				{
 						RC_command_delay = 0;
-						if(RCcommand == THROTTLE_LOW + YAW_HIGH + PITCH_MED + ROLL_MED )
-								return -1; // TO ARM
+						if(RCcommand == THROTTLE_LOW + YAW_HIGH + PITCH_LOW + ROLL_MED )  {
+							imu.lock = 0;
+							Led_event_flasher(ACC_CALIBRATION);		
+							return 1; // TO ARM
+						}
+						if(RCcommand == THROTTLE_LOW + YAW_LOW +  PITCH_LOW + ROLL_MED )   {
+							imu.lock = 1;
+					//		Motors_init();
+							Led_event_flasher(GYRO_CALIBRATION);	
+							return 2; // TO DISARMED
+						}
 						if(RCcommand == THROTTLE_LOW + YAW_LOW +  PITCH_MED + ROLL_MED )
-								return -1; // TO DESARMED
-						if(RCcommand == THROTTLE_LOW + YAW_LOW +  PITCH_LOW + ROLL_MED )
-								return -1; // IMU Calibrate;
+							{
+								if(imu.lock == 1) {
+								IMU_calibrate_tmp();
+							Led_event_flasher(IMU_CALIBRATION);	}
+							return 3; // IMU Calibrate;
+						}
 						// Add other RC command gestures.
 
 				}
@@ -266,7 +299,11 @@ int	RC_gesture(void)
 				RC_command_delay = 0;
 		}
 		RCcommand = Rctmp;
-
+		
+	#if EBOXDRONEDEBUG == 1
+		rchande = micros();
+	#endif
+	//	uart1.printf("Rctmp = %d, RCcommand = %d, Rcdelay = %d \n", Rctmp, RCcommand, RC_command_delay);
 		return -1;
 }
 

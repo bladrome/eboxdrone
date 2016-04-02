@@ -7,7 +7,7 @@
 #define CONSTANTS_G					9.80665f		
 
 #define IMU_SAMPLE_FREQ				100
-#define IMU_CUTOFF_FREQ				30
+#define IMU_CUTOFF_FREQ				20
 
 
 #define ACC_CALC_TIME				3000		//ms
@@ -34,6 +34,7 @@ enum{
 
 typedef struct imu_tt
 {
+		uint8_t lock;     //0 unlock
 		uint8_t caliPass;
 		uint8_t ready;
 		int16_t accADC[3];

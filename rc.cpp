@@ -2,7 +2,7 @@
 #include "led.h"
 #include "rc.h"
 #include "imu.h"
-#include "eboxdronedebug.h"
+//#include "eboxdronedebug.h"
 
 #define STICK_HIGH			(950)
 #define STICK_LOW			(50)
@@ -146,9 +146,6 @@ int main(void)
 
 void RCdata_compute(void)
 {
-	#if EBOXDRONEDEBUG == 1
-		rccomputes = micros();
-	#endif
 		int rcraw[CHANNELS];
 		int32_t avg = 0;
 
@@ -162,9 +159,6 @@ void RCdata_compute(void)
 		Data2angle();
 		RC_gesture();
 		
-	#if EBOXDRONEDEBUG == 1
-		rccomputee = micros();
-	#endif
 }
 void Data2angle(void)
 {
@@ -186,9 +180,6 @@ double Cut_deadband(double from, double to, double deadband)
 }
 uint32_t Get_pulse(uint8_t channel)
 {
-	#if EBOXDRONEDEBUG == 1
-		rccaptures = micros();
-	#endif
 		float ret = 0;
 		switch(channel)
 		{
@@ -239,9 +230,6 @@ uint32_t Get_pulse(uint8_t channel)
 						}
 		}
 		
-	#if EBOXDRONEDEBUG == 1
-		rccapturee = micros();
-	#endif
 		
 		return ret;
 }
@@ -252,9 +240,6 @@ int	RC_gesture(void)
 {
 //		static int RC_command_delay = 0;
 //		static uint8_t RCcommand = 0;
-	#if EBOXDRONEDEBUG == 1
-		rchands = micros();
-	#endif
 		uint8_t Rctmp = 0;
 		for(int i = 0; i < CHANNELS; ++i)
 		{
@@ -300,9 +285,6 @@ int	RC_gesture(void)
 		}
 		RCcommand = Rctmp;
 		
-	#if EBOXDRONEDEBUG == 1
-		rchande = micros();
-	#endif
 	//	uart1.printf("Rctmp = %d, RCcommand = %d, Rcdelay = %d \n", Rctmp, RCcommand, RC_command_delay);
 		return -1;
 }

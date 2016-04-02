@@ -1,6 +1,6 @@
 #include "imu.h"
 #include "filter.h"
-#include "eboxdronedebug.h"
+//#include "eboxdronedebug.h"
 
 
 ELPF    acc_x_lpf;
@@ -111,24 +111,12 @@ void IMU_update_sensors(void)
 {
 
 		//read raw
-	#if EBOXDRONEDEBUG == 1
-		mpuaccalls = micros();
-		mpualls = micros();
-	#endif
 		mpu.get_data(ACCEL_XOUT_H, imu.accADC, 3);
 //	uart1.printf("%d \n\r", imu.accADC[0]);
 //	uart1.printf("%d \n\r", imu.accADC[1]);
 //	uart1.printf("%d \n\r", imu.accADC[2]);
 	//delay_ms(1000);
-	#if EBOXDRONEDEBUG == 1
-		mpuaccalle = micros();
-		mpugyroalls = micros();
-	#endif
 		mpu.get_data(GYRO_XOUT_H, imu.gyroADC, 3);
-	#if EBOXDRONEDEBUG == 1
-		mpugyroalle = micros();
-		mpualle = micros();
-	#endif
 		//tutn to physical
 		for(int i = 0; i < 3; ++i)
 		{
@@ -136,23 +124,13 @@ void IMU_update_sensors(void)
 				imu.gyroRaw[i] = (float)imu.gyroADC[i] * GYRO_SCALE * PI / 180.f;		//deg/s
 		}
 
-	#if EBOXDRONEDEBUG == 1
-		filterones = micros();
-		filtersixs = micros();
-	#endif
 		imu.accb[0] = acc_x_lpf.apply(imu.accRaw[0]-imu.accOffset[0]);
-	#if EBOXDRONEDEBUG == 1
-		filteronee = micros();
-	#endif
 		imu.accb[1] = acc_y_lpf.apply(imu.accRaw[1]-imu.accOffset[1]);
 		imu.accb[2] = acc_z_lpf.apply(imu.accRaw[2]-imu.accOffset[2]);
 
 		imu.gyro[0] = gyro_x_lpf.apply(imu.gyroRaw[0]);
 		imu.gyro[1] = gyro_y_lpf.apply(imu.gyroRaw[1]);
 		imu.gyro[2] = gyro_z_lpf.apply(imu.gyroRaw[2]); 
-	#if EBOXDRONEDEBUG == 1
-		filtersixe = micros();
-	#endif
 
 } 
 

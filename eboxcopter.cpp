@@ -50,7 +50,7 @@ int main()
 
 						IMU_estimate();
 
-						Angle_control();
+						Rate_control();
 
 						Motors_control();
 
@@ -65,7 +65,7 @@ int main()
 
 						RCdata_compute();
 
-						Rate_control();
+						Angle_control();
 
 				}
 
